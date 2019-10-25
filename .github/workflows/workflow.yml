@@ -1,0 +1,53 @@
+name: Main workflow
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+        lean: [3.0.0, 3.4.2]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install asdf
+        run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
+
+      - name: Install lean and print lean version
+        run: |
+          . $HOME/asdf/asdf.sh
+          asdf plugin-add lean $GITHUB_WORKSPACE
+          asdf install lean ${{ matrix.lean }}
+          asdf global lean ${{ matrix.lean }}
+          lean --version
+
+  test:
+    runs-on: macOS-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install asdf
+        run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
+
+      - name: Test plugin
+        env:
+          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          . $HOME/asdf/asdf.sh
+          asdf plugin-add lean $GITHUB_WORKSPACE
+          bats test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run ShellCheck
+        run: shellcheck bin/*
