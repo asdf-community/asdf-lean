@@ -17,7 +17,10 @@ jobs:
 
       - name: Install gmp for macOS
         if: matrix.os == 'macOS-latest'
-        run: brew install gmp mpfr
+        run: |
+          brew update
+          brew upgrade
+          brew install gmp
 
       - name: Install asdf
         run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
