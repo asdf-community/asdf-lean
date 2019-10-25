@@ -15,6 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      - name: Install gmp for macOS
+        if: matrix.os == 'macOS-latest'
+        run: brew install gmp
+
       - name: Install asdf
         run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
 
