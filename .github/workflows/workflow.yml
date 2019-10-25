@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        lean: [3.0.0, 3.4.2]
+        lean: [3.1.0, 3.4.2]
 
     runs-on: ${{ matrix.os }}
 
@@ -17,10 +17,7 @@ jobs:
 
       - name: Install gmp for macOS
         if: matrix.os == 'macOS-latest'
-        run: |
-          brew update
-          brew upgrade
-          brew install gmp
+        run: brew install gmp
 
       - name: Install asdf
         run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
