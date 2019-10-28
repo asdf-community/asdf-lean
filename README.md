@@ -1,6 +1,6 @@
 <div align="center">
 <h1>asdf-lean 📦</h1>
-Lean plugin for asdf version manager
+<span><a href="https://leanprover.github.io">Lean</a> plugin for asdf version manager</span>
 </div>
 <hr />
 
