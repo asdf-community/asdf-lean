@@ -4,7 +4,7 @@
 </div>
 <hr />
 
-[![Main workflow](https://github.com/asdf-community/asdf-lean/workflows/Main%20workflow/badge.svg)](https://github.com/asdf-community/asdf-lean/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/asdf-community/asdf-lean/Main%20workflow?style=flat-square)](https://github.com/asdf-community/asdf-lean/actions)
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/asdf-community/asdf-lean?style=flat-square&color=brightgreen)](https://github.com/asdf-community/asdf-lean/blob/master/LICENSE)
