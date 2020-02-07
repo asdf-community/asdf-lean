@@ -13,36 +13,10 @@ on:
     - cron: "0 0 * * 5"
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macOS-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-
-      - name: Install gmp for macOS
-        if: matrix.os == 'macOS-latest'
-        run: brew install gmp
-
-      - name: Install asdf
-        run: git clone https://github.com/asdf-vm/asdf.git $HOME/asdf
-
-      - name: Install lean and print lean version
-        run: |
-          . $HOME/asdf/asdf.sh
-          asdf plugin-add lean $GITHUB_WORKSPACE
-          asdf install lean latest
-        env:
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   plugin_test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [macos-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -55,7 +29,7 @@ jobs:
           GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -83,7 +57,7 @@ jobs:
         run: shellcheck bin/*
 
   format:
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
