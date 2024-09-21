@@ -22,6 +22,27 @@ fail() {
   exit 1
 }
 
+uncompress() {
+  local ext=$1
+
+  case "$ext" in
+    zip)
+      unzip -q "$source_path" -d "$install_path" || fail "Could not uncompress $source_path"
+      cd "$extracted_path"
+      mv ./* ../ && cd ..
+      rm -rf "$source_path" "$extracted_path"
+      ;;
+    tar.gz)
+      tar zxf "$source_path" -C "$install_path" --strip-components=1 || fail "Could not uncompress $source_path"
+      rm -rf "$source_path"
+      ;;
+    tar.zst)
+      tar --zstd -xvf "$source_path" -C "$install_path" --strip-components=1 || fail "Could not uncompress $source_path"
+      rm -rf "$source_path"
+      ;;
+  esac
+}
+
 install_lean() {
   local install_type=$1
   local version=$2
@@ -33,33 +54,38 @@ install_lean() {
 
   local platform
   local extension
+  local download_url
 
   case "$OSTYPE" in
-    darwin*) platform="darwin" extension="zip" ;;
-    linux*) platform="linux" extension="tar.gz" ;;
+    darwin*) platform="darwin"
+      extension="zip"
+      ;;
+    linux*) platform="linux"
+      if [[ $version == 3* ]]; then
+        extension="tar.gz"
+      elif [[ $version == 4* ]]; then
+        extension="tar.zst"
+      fi
+      ;;
     *) fail "Unsupported platform" ;;
   esac
 
   local fullname="lean-${version}-${platform}"
-  local download_url="https://github.com/leanprover/lean/releases/download/v${version}/${fullname}.${extension}"
+
+  if [[ $version == 3* ]]; then
+    download_url="https://github.com/leanprover/lean3/releases/download/v${version}/${fullname}.${extension}"
+  elif [[ $version == 4* ]]; then
+    download_url="https://github.com/leanprover/lean4/releases/download/v${version}/${fullname}.${extension}"
+  fi
+
   local source_path="${install_path}/${fullname}.${extension}"
   local extracted_path="${install_path}/${fullname}"
 
   (
     echo "∗ Downloading and installing lean..."
+    echo $download_url
     curl --silent --location --create-dirs --output "$source_path" "$download_url" || fail "Could not download"
-    case "$platform" in
-      darwin)
-        unzip -q "$source_path" -d "$install_path" || fail "Could not uncompress"
-        cd "$extracted_path"
-        mv ./* ../ && cd ..
-        rm -rf "$source_path" "$extracted_path"
-        ;;
-      linux)
-        tar zxf "$source_path" -C "$install_path" --strip-components=1 || fail "Could not uncompress"
-        rm -rf "$source_path"
-        ;;
-    esac
+    uncompress $extension
     echo "The installation was successful!"
   ) || (
     rm -rf "$install_path"
